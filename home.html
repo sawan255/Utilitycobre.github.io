@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home</title>
+    <meta name="description" content="Home page shell." />
+    <style>
+      :root {
+        --bg: #0b0d12;
+        --bg-2: #141926;
+        --text: #f2f5ff;
+        --muted: #b8c2e0;
+        --accent: #4ad9ff;
+        --card: rgba(10, 12, 18, 0.7);
+        --surface: rgba(255, 255, 255, 0.06);
+        --border: rgba(255, 255, 255, 0.12);
+      }
+
+      body.light {
+        --bg: #f7f8fb;
+        --bg-2: #dfe6f1;
+        --text: #0c1222;
+        --muted: #4d5b77;
+        --accent: #1a8cff;
+        --card: rgba(255, 255, 255, 0.9);
+        --surface: rgba(255, 255, 255, 0.7);
+        --border: rgba(12, 18, 34, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Segoe UI", Tahoma, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(1200px 600px at 10% 10%, #1d2440 0%, transparent 55%),
+          radial-gradient(1000px 500px at 90% 20%, #0e3a4a 0%, transparent 60%),
+          linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 100%);
+        min-height: 100vh;
+        padding: 0;
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+
+      .topbar {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(12px);
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      body.light .topbar {
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .menu-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+
+      .page {
+        min-height: calc(100vh - 64px);
+        padding: 16px 24px 32px;
+        display: grid;
+        gap: 20px;
+      }
+
+      .home-title {
+        font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+        text-transform: uppercase;
+        justify-self: center;
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      .overlay.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 280px;
+        background: var(--card);
+        border-right: 1px solid var(--border);
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        gap: 18px;
+        z-index: 2;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        letter-spacing: 0.06em;
+      }
+
+      .side-links a,
+      .side-links button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .side-links {
+        display: grid;
+        gap: 12px;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        display: grid;
+        gap: 12px;
+      }
+
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .theme-icon {
+        font-size: 1.1rem;
+      }
+
+      .chat-shell {
+        display: grid;
+        grid-template-columns: minmax(220px, 280px) 1fr;
+        gap: 18px;
+        min-height: 520px;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      }
+
+      .contacts {
+        display: grid;
+        gap: 12px;
+      }
+
+      .contact {
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        gap: 12px;
+        align-items: center;
+        padding: 10px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        background: var(--surface);
+        cursor: pointer;
+      }
+
+      .contact.active {
+        border-color: var(--accent);
+        background: rgba(74, 217, 255, 0.12);
+      }
+
+      .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        display: grid;
+        place-items: center;
+        font-size: 1.4rem;
+        background: var(--surface);
+      }
+
+      .contact small {
+        color: var(--muted);
+      }
+
+      .chat-area {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 12px;
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .chat-header h3 {
+        margin: 0;
+      }
+
+      .messages {
+        display: grid;
+        gap: 10px;
+        padding: 8px 4px;
+        overflow-y: auto;
+        max-height: 360px;
+      }
+
+      .placeholder {
+        display: grid;
+        place-items: center;
+        height: 100%;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .bubble {
+        max-width: 70%;
+        padding: 10px 14px;
+        padding-right: 36px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--border);
+        line-height: 1.4;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        position: relative;
+      }
+
+      .bubble.me {
+        justify-self: end;
+        background: rgba(74, 217, 255, 0.16);
+        border-color: rgba(74, 217, 255, 0.4);
+      }
+
+      .reply-btn {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 0.8rem;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.15s ease, transform 0.15s ease;
+      }
+
+      .bubble:hover .reply-btn {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+
+      .reply-preview {
+        border-left: 3px solid var(--accent);
+        padding: 6px 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: var(--muted);
+        display: grid;
+        gap: 2px;
+      }
+
+      .reply-bar {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        padding: 8px 10px;
+        border-radius: 10px;
+      }
+
+      .reply-bar.active {
+        display: flex;
+      }
+
+      .reply-bar button {
+        border: none;
+        background: transparent;
+        color: var(--text);
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .composer {
+        display: grid;
+        gap: 10px;
+        position: relative;
+      }
+
+      .input-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .composer input {
+        display: none;
+      }
+
+      .send-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: none;
+        background: var(--accent);
+        color: #001018;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .attach-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 1.1rem;
+      }
+
+      .message-input {
+        width: 100%;
+        min-height: 42px;
+        max-height: 180px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 1rem;
+        resize: none;
+        overflow: hidden;
+        line-height: 1.4;
+      }
+
+      .emoji-panel {
+        display: none;
+        position: absolute;
+        right: 70px;
+        bottom: 64px;
+        width: min(320px, 90vw);
+        max-height: 320px;
+        overflow: hidden;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--card);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      }
+
+      .emoji-panel.open {
+        display: flex;
+      }
+
+      .emoji-panel button,
+      .emoji-toggle {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 10px;
+        padding: 6px 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+      }
+
+      .emoji-toggle {
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .emoji-header {
+        width: 100%;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .frequent-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .emoji-search {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+
+      .emoji-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+        gap: 8px;
+        overflow-y: auto;
+        padding-right: 6px;
+        max-height: 200px;
+      }
+
+      .emoji-grid button {
+        font-size: 1.1rem;
+      }
+
+      @media (max-width: 900px) {
+        .chat-shell {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay" id="overlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <h2>Menu</h2>
+      <div class="side-links">
+        <a href="#chat" id="chatLink">Chat</a>
+        <a href="#friends">Friends</a>
+        <a href="#projects">Projects</a>
+      </div>
+      <div class="sidebar-footer">
+        <button class="theme-toggle" id="themeToggle">
+          <span class="theme-icon" id="themeIcon">MOON</span>
+          <span id="themeText">Dark mode</span>
+        </button>
+        <a href="index.html">Log out</a>
+      </div>
+    </aside>
+
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">MENU</button>
+      <div></div>
+    </header>
+
+    <main class="page">
+      <div class="home-title" id="homeTitle">Home</div>
+
+      <section class="chat-shell" id="chat" hidden>
+        <div class="panel">
+          <h3>Contacts</h3>
+          <div class="contacts">
+            <div class="contact" id="contactSelf">
+              <img
+                class="avatar"
+                alt="Panda avatar"
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><rect width='160' height='160' fill='%23f2f5ff'/><circle cx='48' cy='56' r='22' fill='%2323262f'/><circle cx='112' cy='56' r='22' fill='%2323262f'/><circle cx='80' cy='92' r='48' fill='%23ffffff' stroke='%2323262f' stroke-width='6'/><circle cx='62' cy='86' r='10' fill='%2323262f'/><circle cx='98' cy='86' r='10' fill='%2323262f'/><circle cx='80' cy='106' r='8' fill='%2323262f'/></svg>"
+              />
+              <div>
+                <strong>Myself</strong>
+                <div><small>Online</small></div>
+              </div>
+            </div>
+            <div class="contact" id="contactSaved">
+              <img
+                class="avatar"
+                alt="Saved messages"
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><rect width='160' height='160' fill='%23f2f5ff'/><rect x='40' y='30' width='80' height='100' rx='16' fill='%23ffd166' stroke='%2323262f' stroke-width='6'/><rect x='54' y='52' width='52' height='10' rx='5' fill='%2323262f'/><rect x='54' y='72' width='52' height='10' rx='5' fill='%2323262f'/><rect x='54' y='92' width='40' height='10' rx='5' fill='%2323262f'/></svg>"
+              />
+              <div>
+                <strong>Saved Messages</strong>
+                <div><small>Notes</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel chat-area">
+          <div class="placeholder" id="chatPlaceholder">
+            Click a contact to see the chat.
+          </div>
+
+          <div id="chatContent" hidden>
+            <div class="chat-header">
+              <img
+                class="avatar"
+                id="chatAvatar"
+                alt="Profile"
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><rect width='160' height='160' fill='%23f2f5ff'/><circle cx='48' cy='56' r='22' fill='%2323262f'/><circle cx='112' cy='56' r='22' fill='%2323262f'/><circle cx='80' cy='92' r='48' fill='%23ffffff' stroke='%2323262f' stroke-width='6'/><circle cx='62' cy='86' r='10' fill='%2323262f'/><circle cx='98' cy='86' r='10' fill='%2323262f'/><circle cx='80' cy='106' r='8' fill='%2323262f'/></svg>"
+              />
+              <div>
+                <h3 id="chatName">Myself</h3>
+                <small class="muted">Panda profile</small>
+              </div>
+            </div>
+
+            <div class="messages" id="messageList"></div>
+
+            <div class="composer">
+              <div class="reply-bar" id="replyBar">
+                <div id="replyText">Replying to:</div>
+                <button type="button" id="replyClose">x</button>
+              </div>
+              <div class="input-row">
+                <textarea
+                  id="chatInput"
+                  class="message-input"
+                  rows="1"
+                  placeholder="Type a message..."
+                ></textarea>
+                <button class="attach-btn" id="attachBtn" type="button">+</button>
+                <button class="emoji-toggle" id="emojiToggle" type="button">🙂</button>
+                <button class="send-btn" id="sendBtn" aria-label="Send">
+                  ↑
+                </button>
+              </div>
+              <div class="emoji-panel" id="emojiPanel">
+                <div class="emoji-header">Search</div>
+                <input
+                  class="emoji-search"
+                  id="emojiSearch"
+                  type="text"
+                  placeholder="Type emoji name..."
+                />
+                <div class="emoji-header">Recent</div>
+                <div class="frequent-row" id="frequentRow"></div>
+                <div class="emoji-header">All emojis</div>
+                <div class="emoji-grid" id="emojiGrid"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+  import { auth, db } from "./firebase-config.js";
+  import {
+    onAuthStateChanged,
+    signOut,
+  } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+  import {
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    orderBy,
+    onSnapshot,
+  } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const menuBtn = document.getElementById("menuBtn");
+  const themeToggle = document.getElementById("themeToggle");
+  const themeIcon = document.getElementById("themeIcon");
+  const themeText = document.getElementById("themeText");
+
+  function openSidebar() {
+    sidebar.classList.add("open");
+    overlay.classList.add("open");
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("open");
+  }
+
+  menuBtn.addEventListener("click", openSidebar);
+  overlay.addEventListener("click", closeSidebar);
+
+  themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("light");
+    const isLight = document.body.classList.contains("light");
+    themeIcon.textContent = isLight ? "SUN" : "MOON";
+    themeText.textContent = isLight ? "Light mode" : "Dark mode";
+  });
+
+  const chatLink = document.getElementById("chatLink");
+  const chatSection = document.getElementById("chat");
+  const homeTitle = document.getElementById("homeTitle");
+  const chatPlaceholder = document.getElementById("chatPlaceholder");
+  const chatContent = document.getElementById("chatContent");
+  const contactSelf = document.getElementById("contactSelf");
+  const contactSaved = document.getElementById("contactSaved");
+  const chatName = document.getElementById("chatName");
+  const chatAvatar = document.getElementById("chatAvatar");
+
+  chatLink.addEventListener("click", () => {
+    closeSidebar();
+    chatSection.hidden = false;
+    homeTitle.hidden = true;
+  });
+
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const attachBtn = document.getElementById("attachBtn");
+  const messageList = document.getElementById("messageList");
+  const replyBar = document.getElementById("replyBar");
+  const replyText = document.getElementById("replyText");
+  const replyClose = document.getElementById("replyClose");
+  const emojiPanel = document.getElementById("emojiPanel");
+  const emojiToggle = document.getElementById("emojiToggle");
+  const frequentRow = document.getElementById("frequentRow");
+  const emojiGrid = document.getElementById("emojiGrid");
+  const emojiSearch = document.getElementById("emojiSearch");
+  const emojiCounts = new Map();
+
+  function resizeInput() {
+    chatInput.style.height = "auto";
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 180) + "px";
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  chatInput.addEventListener("input", resizeInput);
+  chatInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  attachBtn.addEventListener("click", () => {
+    alert("Attach feature will be connected later.");
+  });
+
+  emojiToggle.addEventListener("click", () => {
+    emojiPanel.classList.toggle("open");
+    if (emojiPanel.classList.contains("open")) {
+      emojiSearch.focus();
+    }
+  });
+
+  function renderFrequent() {
+    frequentRow.innerHTML = "";
+    const top = [...emojiCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([emoji]) => emoji);
+    top.forEach((emoji) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = emoji;
+      frequentRow.appendChild(btn);
+    });
+  }
+
+  function insertEmoji(emoji) {
+    chatInput.value += emoji;
+    chatInput.focus();
+    emojiCounts.set(emoji, (emojiCounts.get(emoji) || 0) + 1);
+    renderFrequent();
+  }
+
+  emojiPanel.addEventListener("click", (event) => {
+    if (event.target.tagName !== "BUTTON") return;
+    const emoji = event.target.dataset.emoji || event.target.textContent;
+    insertEmoji(emoji);
+  });
+
+  frequentRow.addEventListener("click", (event) => {
+    if (event.target.tagName !== "BUTTON") return;
+    insertEmoji(event.target.textContent);
+  });
+
+  const emojiList = [
+    { e: "??", name: "grinning face" },
+    { e: "??", name: "beaming face" },
+    { e: "??", name: "face with tears of joy" },
+    { e: "??", name: "rolling on the floor laughing" },
+    { e: "??", name: "smiling face" },
+    { e: "??", name: "heart eyes" },
+    { e: "??", name: "kiss" },
+    { e: "??", name: "sunglasses" },
+    { e: "??", name: "party" },
+    { e: "??", name: "sleeping" },
+    { e: "??", name: "thinking" },
+    { e: "??", name: "raised hands" },
+    { e: "??", name: "thumbs up" },
+    { e: "??", name: "clap" },
+    { e: "??", name: "fire" },
+    { e: "?", name: "sparkles" },
+    { e: "??", name: "party popper" },
+    { e: "??", name: "hundred" },
+    { e: "??", name: "red heart" },
+    { e: "??", name: "blue heart" },
+    { e: "??", name: "panda" },
+    { e: "??", name: "cat" },
+    { e: "??", name: "dog" },
+    { e: "??", name: "fox" },
+    { e: "??", name: "owl" },
+    { e: "??", name: "moon" },
+    { e: "??", name: "sun" },
+    { e: "?", name: "star" },
+    { e: "?", name: "bolt" },
+    { e: "??", name: "music" },
+    { e: "??", name: "paperclip" },
+    { e: "??", name: "camera" },
+    { e: "?", name: "check" },
+    { e: "?", name: "cross" },
+  ];
+
+  function renderEmojiGrid(filter = "") {
+    emojiGrid.innerHTML = "";
+    const q = filter.trim().toLowerCase();
+    emojiList
+      .filter((item) => item.name.includes(q))
+      .forEach((item) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = item.e;
+        btn.dataset.emoji = item.e;
+        btn.title = item.name;
+        emojiGrid.appendChild(btn);
+      });
+  }
+
+  emojiSearch.addEventListener("input", () => {
+    renderEmojiGrid(emojiSearch.value);
+  });
+
+  renderEmojiGrid();
+
+  let currentUser = null;
+  let activeChat = null;
+  let replyTargetId = null;
+  let unsubscribeMessages = null;
+  let currentMessages = [];
+
+  function clearReply() {
+    replyTargetId = null;
+    replyBar.classList.remove("active");
+  }
+
+  function renderMessages() {
+    messageList.innerHTML = "";
+    if (!activeChat) return;
+
+    const byId = new Map(currentMessages.map((m) => [m.id, m]));
+    currentMessages.forEach((msg) => {
+      const bubble = document.createElement("div");
+      bubble.className = msg.me ? "bubble me" : "bubble";
+      bubble.dataset.msgId = msg.id;
+
+      if (msg.replyTo) {
+        const original = byId.get(msg.replyTo);
+        const preview = document.createElement("div");
+        preview.className = "reply-preview";
+        preview.textContent = original ? original.text : "Original message";
+        bubble.appendChild(preview);
+      }
+
+      const textNode = document.createElement("div");
+      textNode.textContent = msg.text;
+      bubble.appendChild(textNode);
+
+      const replyBtn = document.createElement("button");
+      replyBtn.className = "reply-btn";
+      replyBtn.type = "button";
+      replyBtn.textContent = "?";
+      replyBtn.title = "Reply";
+      bubble.appendChild(replyBtn);
+
+      messageList.appendChild(bubble);
+    });
+
+    messageList.scrollTop = messageList.scrollHeight;
+  }
+
+  function openContact(name, avatarSrc, activeEl, chatId) {
+    chatPlaceholder.hidden = true;
+    chatContent.hidden = false;
+    chatName.textContent = name;
+    chatAvatar.src = avatarSrc;
+    contactSelf.classList.remove("active");
+    contactSaved.classList.remove("active");
+    activeEl.classList.add("active");
+    clearReply();
+
+    if (unsubscribeMessages) unsubscribeMessages();
+    activeChat = chatId;
+
+    const messagesRef = collection(db, "users", currentUser.uid, "chats", chatId, "messages");
+    const q = query(messagesRef, orderBy("createdAt", "asc"));
+    unsubscribeMessages = onSnapshot(q, (snap) => {
+      currentMessages = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      renderMessages();
+    });
+  }
+
+  async function sendMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    if (!activeChat || !currentUser) return;
+
+    const messagesRef = collection(db, "users", currentUser.uid, "chats", activeChat, "messages");
+    await addDoc(messagesRef, {
+      text,
+      me: true,
+      replyTo: replyTargetId || null,
+      createdAt: serverTimestamp(),
+    });
+
+    chatInput.value = "";
+    resizeInput();
+    clearReply();
+  }
+
+  messageList.addEventListener("click", (event) => {
+    const bubble = event.target.closest(".bubble");
+    if (!bubble) return;
+    const msgId = bubble.dataset.msgId;
+    const msg = currentMessages.find((m) => m.id === msgId);
+    if (!msg) return;
+    replyTargetId = msgId;
+    replyText.textContent = `Replying to: ${msg.text}`;
+    replyBar.classList.add("active");
+  });
+
+  replyClose.addEventListener("click", clearReply);
+
+  contactSelf.addEventListener("click", () => {
+    if (!currentUser) return;
+    openContact(
+      "Myself",
+      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><rect width='160' height='160' fill='%23f2f5ff'/><circle cx='48' cy='56' r='22' fill='%2323262f'/><circle cx='112' cy='56' r='22' fill='%2323262f'/><circle cx='80' cy='92' r='48' fill='%23ffffff' stroke='%2323262f' stroke-width='6'/><circle cx='62' cy='86' r='10' fill='%2323262f'/><circle cx='98' cy='86' r='10' fill='%2323262f'/><circle cx='80' cy='106' r='8' fill='%2323262f'/></svg>",
+      contactSelf,
+      "self"
+    );
+  });
+
+  contactSaved.addEventListener("click", () => {
+    if (!currentUser) return;
+    openContact(
+      "Saved Messages",
+      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><rect width='160' height='160' fill='%23f2f5ff'/><rect x='40' y='30' width='80' height='100' rx='16' fill='%23ffd166' stroke='%2323262f' stroke-width='6'/><rect x='54' y='52' width='52' height='10' rx='5' fill='%2323262f'/><rect x='54' y='72' width='52' height='10' rx='5' fill='%2323262f'/><rect x='54' y='92' width='40' height='10' rx='5' fill='%2323262f'/></svg>",
+      contactSaved,
+      "saved"
+    );
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+    currentUser = user;
+  });
+
+  document.querySelector("a[href='index.html']").addEventListener("click", async (e) => {
+    e.preventDefault();
+    await signOut(auth);
+    window.location.href = "index.html";
+  });
+</script>
+  </body>
+</html>
+
+
+

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome</title>
+    <meta name="description" content="Welcome page for the project." />
+    <style>
+      :root {
+        --bg: #0b0d12;
+        --bg-2: #141926;
+        --text: #f2f5ff;
+        --muted: #b8c2e0;
+        --accent: #4ad9ff;
+        --accent-2: #ffd166;
+        --card: rgba(10, 12, 18, 0.7);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Segoe UI", Tahoma, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(1200px 600px at 10% 10%, #1d2440 0%, transparent 55%),
+          radial-gradient(1000px 500px at 90% 20%, #0e3a4a 0%, transparent 60%),
+          linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 100%);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+      }
+
+      .layout {
+        width: min(1100px, 100%);
+        display: grid;
+        gap: 22px;
+      }
+
+      .hero {
+        background: var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px;
+        padding: clamp(28px, 5vw, 70px);
+        box-shadow:
+          0 30px 80px rgba(0, 0, 0, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(12px);
+      }
+
+      .badge {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(74, 217, 255, 0.14);
+        color: var(--accent);
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      h1 {
+        margin: 18px 0 10px;
+        font-size: clamp(2.1rem, 6vw, 4rem);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(1rem, 2.2vw, 1.2rem);
+        line-height: 1.6;
+      }
+
+      .cta-row {
+        margin-top: 28px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .btn {
+        border: none;
+        padding: 12px 20px;
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .btn.primary {
+        background: linear-gradient(135deg, var(--accent), #1de7b7);
+        color: #001018;
+        box-shadow: 0 12px 30px rgba(74, 217, 255, 0.25);
+      }
+
+      .btn.secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .corporate {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 18px 22px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .corporate .logos {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+
+      .corporate .logos span {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .footer {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      @media (max-width: 700px) {
+        .cta-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="layout">
+      <section class="hero">
+        <span class="badge">Welcome Screen</span>
+        <h1>Welcome to Cobra</h1>
+        <p>
+          A place for friends, projects, and future updates. This is the first
+          page you see before logging in.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn primary" href="login.html">Go to Login</a>
+          <a class="btn secondary" href="home.html">Preview Home</a>
+        </div>
+      </section>
+
+      <section class="corporate">
+        <div>
+          <strong>Corporate & Partners</strong>
+          <div class="footer">Trusted by teams and creators worldwide.</div>
+        </div>
+        <div class="logos">
+          <span>COBRA</span>
+          <span>STUDIO</span>
+          <span>WORKS</span>
+          <span>NETWORK</span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
