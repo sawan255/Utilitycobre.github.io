@@ -153,9 +153,6 @@
       <button class="btn primary" id="googleBtn" type="button">
         Sign in with Gmail
       </button>
-      <a class="btn secondary" id="offlineBtn" href="home.html"
-        >Continue (Beta Testing)</a
-      >
 
       <form id="loginForm">
         <input id="loginEmail" type="email" placeholder="Email" required />
@@ -200,9 +197,6 @@
       tabLogin.addEventListener("click", showLogin);
       tabSignup.addEventListener("click", showSignup);
 
-      document.getElementById("offlineBtn").addEventListener("click", () => {
-        localStorage.setItem("offline_mode", "1");
-      });
     </script>
     <script type="module">
       import {
